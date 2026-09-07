@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32"><Configuration>Debug</Configuration><Platform>Win32</Platform></ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32"><Configuration>Release</Configuration><Platform>Win32</Platform></ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals"><VCProjectVersion>17.0</VCProjectVersion><ProjectGuid>{4FD7EA7F-8A46-4DF7-A0C2-671A2BA147A7}</ProjectGuid><Keyword>Win32Proj</Keyword><RootNamespace>MapEdit</RootNamespace><ProjectName>MapEdit</ProjectName><WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion></PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration"><ConfigurationType>Application</ConfigurationType><UseDebugLibraries>true</UseDebugLibraries><PlatformToolset>v143</PlatformToolset><CharacterSet>NotSet</CharacterSet></PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration"><ConfigurationType>Application</ConfigurationType><UseDebugLibraries>false</UseDebugLibraries><PlatformToolset>v143</PlatformToolset><CharacterSet>NotSet</CharacterSet><WholeProgramOptimization>false</WholeProgramOptimization></PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" /><ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"><Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" /></ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"><Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" /></ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup><OutDir>$(SolutionDir)..\build\$(Configuration)\</OutDir><IntDir>$(SolutionDir)..\build\obj\$(ProjectName)\$(Configuration)\</IntDir><TargetName>MapEdit</TargetName></PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile><WarningLevel>Level3</WarningLevel><TreatWarningAsError>true</TreatWarningAsError><SDLCheck>false</SDLCheck><ConformanceMode>false</ConformanceMode><PrecompiledHeader>NotUsing</PrecompiledHeader><AdditionalIncludeDirectories>$(SolutionDir)..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories><PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions><RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary><RuntimeTypeInfo>false</RuntimeTypeInfo><ExceptionHandling>false</ExceptionHandling><DebugInformationFormat>ProgramDatabase</DebugInformationFormat></ClCompile>
+    <Link><SubSystem>Windows</SubSystem><GenerateDebugInformation>true</GenerateDebugInformation><ProgramDatabaseFile>$(OutDir)MapEdit.pdb</ProgramDatabaseFile><GenerateMapFile>true</GenerateMapFile><MapFileName>$(OutDir)MapEdit.map</MapFileName><GenerateManifest>false</GenerateManifest><AdditionalLibraryDirectories>$(ProjectDir)..\third_party\xiph\lib\Win32\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories><AdditionalDependencies>$(ProjectDir)..\resources\MapEditResources.res;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;shell32.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;winmm.lib;dsound.lib;ddraw.lib;advapi32.lib;ole32.lib;libcmtd.lib;libvcruntimed.lib;libucrtd.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile><WarningLevel>Level3</WarningLevel><TreatWarningAsError>true</TreatWarningAsError><SDLCheck>false</SDLCheck><ConformanceMode>false</ConformanceMode><PrecompiledHeader>NotUsing</PrecompiledHeader><AdditionalIncludeDirectories>$(SolutionDir)..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories><PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions><RuntimeLibrary>MultiThreaded</RuntimeLibrary><RuntimeTypeInfo>false</RuntimeTypeInfo><ExceptionHandling>false</ExceptionHandling><Optimization>MaxSpeed</Optimization><InlineFunctionExpansion>Default</InlineFunctionExpansion><IntrinsicFunctions>false</IntrinsicFunctions><DebugInformationFormat>ProgramDatabase</DebugInformationFormat></ClCompile>
+    <Link><SubSystem>Windows</SubSystem><GenerateDebugInformation>true</GenerateDebugInformation><ProgramDatabaseFile>$(OutDir)MapEdit.pdb</ProgramDatabaseFile><GenerateMapFile>true</GenerateMapFile><MapFileName>$(OutDir)MapEdit.map</MapFileName><GenerateManifest>false</GenerateManifest><AdditionalLibraryDirectories>$(ProjectDir)..\third_party\xiph\lib\Win32\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories><AdditionalDependencies>$(ProjectDir)..\resources\MapEditResources.res;libvorbisfile_static.lib;libvorbis_static.lib;libogg_static.lib;shell32.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;winmm.lib;dsound.lib;ddraw.lib;advapi32.lib;ole32.lib;libcmt.lib;libvcruntime.lib;libucrt.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
+  </ItemDefinitionGroup>
+  <ItemGroup><ClInclude Include="..\include\mapedit\audio\sfx.hpp" /><ClInclude Include="..\include\mapedit\audio\sound.hpp" /><ClInclude Include="..\include\mapedit\compression\filter.hpp" /><ClInclude Include="..\include\mapedit\compression\mtf_filter.hpp" /><ClInclude Include="..\include\mapedit\compression\qs0_coder.hpp" /><ClInclude Include="..\include\mapedit\compression\qs1_coder.hpp" /><ClInclude Include="..\include\mapedit\compression\qsmodel.hpp" /><ClInclude Include="..\include\mapedit\compression\r_coder.hpp" /><ClInclude Include="..\include\mapedit\compression\rle_coder.hpp" /><ClInclude Include="..\include\mapedit\core\angle.hpp" /><ClInclude Include="..\include\mapedit\core\containers.hpp" /><ClInclude Include="..\include\mapedit\core\globals.hpp" /><ClInclude Include="..\include\mapedit\core\myerror.hpp" /><ClInclude Include="..\include\mapedit\core\profile_registry.hpp" /><ClInclude Include="..\include\mapedit\core\resource.hpp" /><ClInclude Include="..\include\mapedit\core\stream.hpp" /><ClInclude Include="..\include\mapedit\core\string.hpp" /><ClInclude Include="..\include\mapedit\editor\map_edit.hpp" /><ClInclude Include="..\include\mapedit\engine\engine.hpp" /><ClInclude Include="..\include\mapedit\engine\constant.hpp" /><ClInclude Include="..\include\mapedit\engine\groups.hpp" /><ClInclude Include="..\include\mapedit\engine\message.hpp" /><ClInclude Include="..\include\mapedit\engine\player.hpp" /><ClInclude Include="..\include\mapedit\engine\player_steam.hpp" /><ClInclude Include="..\include\mapedit\engine\ptr_sprite.hpp" /><ClInclude Include="..\include\mapedit\engine\region.hpp" /><ClInclude Include="..\include\mapedit\engine\sprite.hpp" /><ClInclude Include="..\include\mapedit\engine\terrain_unit.hpp" /><ClInclude Include="..\include\mapedit\engine\train_info.hpp" /><ClInclude Include="..\include\mapedit\engine\unit_types.hpp" /><ClInclude Include="..\include\mapedit\engine\weapon.hpp" /><ClInclude Include="..\include\mapedit\geometry\polygon.hpp" /><ClInclude Include="..\include\mapedit\graphics\color.hpp" /><ClInclude Include="..\include\mapedit\input\input.hpp" /><ClInclude Include="..\include\mapedit\input\mouse.hpp" /><ClInclude Include="..\include\mapedit\legacy_compiler.hpp" /><ClInclude Include="..\include\mapedit\map\draw_map.hpp" /><ClInclude Include="..\include\mapedit\map\hash_map.hpp" /><ClInclude Include="..\include\mapedit\map\map.hpp" /><ClInclude Include="..\include\mapedit\map\railway.hpp" /><ClInclude Include="..\include\mapedit\platform\ddraw_abi.hpp" /><ClInclude Include="..\include\mapedit\platform\win32_abi.hpp" /><ClInclude Include="..\include\mapedit\render\graph.hpp" /><ClInclude Include="..\include\mapedit\render\movie.hpp" /><ClInclude Include="..\include\mapedit\render\picture.hpp" /><ClInclude Include="..\include\mapedit\render\surface_texture.hpp" /><ClInclude Include="..\include\mapedit\render\texture_coords.hpp" /><ClInclude Include="..\include\mapedit\render\vid.hpp" /><ClInclude Include="..\include\mapedit\render\vid_font.hpp" /><ClInclude Include="..\include\mapedit\render\vid_hardware.hpp" /><ClInclude Include="..\include\mapedit\render\vid_light.hpp" /><ClInclude Include="..\include\mapedit\render\vid_software.hpp" /><ClInclude Include="..\include\mapedit\runtime.hpp" /><ClInclude Include="..\include\mapedit\runtime_foundation.hpp" /><ClInclude Include="..\include\mapedit\script\logic.hpp" /><ClInclude Include="..\include\mapedit\ui\dialog.hpp" /><ClInclude Include="..\include\mapedit\core\distance.hpp" /></ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\app\winmain.cpp" />
+    <ClCompile Include="..\src\editor\draw_map.cpp" />
+    <ClCompile Include="..\src\editor\map_edit_control.cpp" />
+    <ClCompile Include="..\src\editor\map_edit_fill.cpp" />
+    <ClCompile Include="..\src\editor\map_edit_factory.cpp" />
+    <ClCompile Include="..\src\editor\map_edit_lifetime.cpp" />
+    <ClCompile Include="..\src\editor\map_edit_misc.cpp" />
+    <ClCompile Include="..\src\editor\map_edit_mouse.cpp" />
+    <ClCompile Include="..\src\editor\map_edit_navigation.cpp" />
+    <ClCompile Include="..\src\editor\map_edit_router_helpers.cpp" />
+    <ClCompile Include="..\src\editor\map_edit_tact.cpp" />
+    <ClCompile Include="..\src\editor\map_edit_workwnd.cpp" />
+    <ClCompile Include="..\src\editor\map_edit_terrain.cpp" />
+    <ClCompile Include="..\src\engine\abi_short.cpp" />
+    <ClCompile Include="..\src\engine\angle.cpp" />
+    <ClCompile Include="..\src\engine\color.cpp" />
+    <ClCompile Include="..\src\engine\compress.cpp" />
+    <ClCompile Include="..\src\engine\containers.cpp" />
+    <ClCompile Include="..\src\engine\distance.cpp" />
+    <ClCompile Include="..\src\engine\editor_sprite_owners.cpp" />
+    <ClCompile Include="..\src\engine\engine_railway.cpp" />
+    <ClCompile Include="..\src\engine\crt_compat.cpp" />
+    <ClCompile Include="..\src\engine\filesystem.cpp" />
+    <ClCompile Include="..\src\engine\globals.cpp" />
+    <ClCompile Include="..\src\engine\graph.cpp" />
+    <ClCompile Include="..\src\engine\groups.cpp" />
+    <ClCompile Include="..\src\engine\hash_map.cpp" />
+    <ClCompile Include="..\src\engine\input.cpp" />
+    <ClCompile Include="..\src\engine\logic.cpp" />
+    <ClCompile Include="..\src\engine\logic_parser.cpp" />
+    <ClCompile Include="..\src\engine\map.cpp" />
+    <ClCompile Include="..\src\engine\map_ctor.cpp" />
+    <ClCompile Include="..\src\engine\map_query.cpp" />
+    <ClCompile Include="..\src\engine\map_runtime.cpp" />
+    <ClCompile Include="..\src\engine\map_shared_closure.cpp" />
+    <ClCompile Include="..\src\engine\menu.cpp" />
+    <ClCompile Include="..\src\engine\unit.cpp" />
+    <ClCompile Include="..\src\engine\mouse.cpp" />
+    <ClCompile Include="..\src\engine\myerror.cpp" />
+    <ClCompile Include="..\src\engine\picture.cpp" />
+    <ClCompile Include="..\src\engine\player.cpp" />
+    <ClCompile Include="..\src\engine\polygon.cpp" />
+    <ClCompile Include="..\src\engine\registry.cpp" />
+    <ClCompile Include="..\src\engine\sound.cpp" />
+    <ClCompile Include="..\src\engine\audio_stream.cpp" />
+    <ClCompile Include="..\src\engine\sprite.cpp" />
+    <ClCompile Include="..\src\engine\sprite_list.cpp" />
+    <ClCompile Include="..\src\engine\string.cpp" />
+    <ClCompile Include="..\src\engine\undo.cpp" />
+    <ClCompile Include="..\src\engine\vid.cpp" />
+    <ClCompile Include="..\src\ui\dialog.cpp" />
+    <ClCompile Include="..\src\engine\resource_short.cpp" />
+    <ClCompile Include="..\src\engine\resource_ini.cpp" />
+      <ClCompile Include="..\src\engine\script_exec.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" /><ImportGroup Label="ExtensionTargets" />
+
+  <Target Name="PatchRetailPeCompatibility" AfterTargets="Link" Condition="'$(Platform)'=='Win32'">
+    <Message Text="Patch MapEdit PE OS/subsystem version to retail VC6 4.0 compatibility metadata" Importance="high" />
+    <Exec Command="&quot;$(SystemRoot)\System32\WindowsPowerShell\v1.0\powershell.exe&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\..\tools\patch_pe_compatibility.ps1&quot; -Path &quot;$(TargetPath)&quot;" />
+  </Target>
+</Project>

@@ -1,0 +1,40 @@
+MapEdit Free Non-Commercial License 1.0
+
+Copyright (c) 2026 MapEdit contributors.
+
+Permission is granted, free of charge, to any person obtaining a copy of this
+software and its source code (the "Software") to use, study, copy, compile,
+modify, and redistribute the Software, in source or binary form, solely for
+non-commercial purposes, subject to the following conditions:
+
+1. This copyright notice and this license must be included with all copies or
+   substantial portions of the Software.
+
+2. Modified versions and derivative works may be redistributed for
+   non-commercial purposes, provided that this license and the original notices
+   are retained and changes are identified.
+
+3. Commercial use is not granted by this license. Commercial use includes, but
+   is not limited to, sale, paid licensing, paid integration, inclusion in a
+   product or service primarily intended for commercial advantage or monetary
+   compensation, or use as a material part of a revenue-generating project.
+   Commercial use requires separate written permission from the copyright
+   holder(s).
+
+4. This license does not grant rights to third-party trademarks, game assets,
+   libraries, or other third-party material. Such components remain subject to
+   their respective licenses and rights.
+
+5. The names of the project and its contributors may not be used to endorse or
+   promote derived products without prior written permission.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+This is a source-available non-commercial license. Because commercial use is
+restricted, it is not an OSI-approved open-source license.
