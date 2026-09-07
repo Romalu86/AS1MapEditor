@@ -1,6 +1,6 @@
 # Alien Shooter Map Editor
 
-MapEdit is a Win32 map editor project prepared for modern Visual Studio while
+Alien Shooter Map Editor is a Win32 map editor project prepared for modern Visual Studio while
 preserving the established editor behavior and legacy file compatibility.
 
 ## Build target
