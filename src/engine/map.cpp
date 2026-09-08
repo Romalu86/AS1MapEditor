@@ -5,6 +5,8 @@ extern "C" unsigned int __stdcall timeEndPeriod(unsigned int period);
 namespace {
 unsigned int g_demoOldCurrentTime=0;
 unsigned int g_demoOldAbsoluteTime=0;
+VID* g_extendedVidSlots[MAP::kVidCapacity-MAP::kRetailVidCapacity]={};
+VID* g_invalidVidSlot=0;
 }
 
 int MAP::IsInitSuccess()
@@ -77,6 +79,36 @@ void MAP::NetworkTact()
 int MAP::ValidateXY(float x, float y)
 {
     return x >= 0.0f && x < m_w && y >= 0.0f && y < m_h;
+}
+
+VID*& MAP::VidSlot(int nvid)
+{
+    if (nvid>=0 && nvid<kRetailVidCapacity)
+        return m_vids[nvid];
+    if (nvid>=kRetailVidCapacity && nvid<kVidCapacity)
+        return g_extendedVidSlots[nvid-kRetailVidCapacity];
+    g_invalidVidSlot=0;
+    return g_invalidVidSlot;
+}
+
+VID* MAP::VidSlot(int nvid) const
+{
+    if (nvid>=0 && nvid<kRetailVidCapacity)
+        return m_vids[nvid];
+    if (nvid>=kRetailVidCapacity && nvid<kVidCapacity)
+        return g_extendedVidSlots[nvid-kRetailVidCapacity];
+    return 0;
+}
+
+void MAP::ClearVidSlots()
+{
+    memset(m_vids,0,sizeof(m_vids));
+    memset(g_extendedVidSlots,0,sizeof(g_extendedVidSlots));
+}
+
+int MAP::EncodeVidQuery(int nvid)
+{
+    return nvid<kRetailVidCapacity ? nvid+0x800 : 0x4000|(nvid&0x1FFF);
 }
 
 SPRITE* MAP::NextSprite(int layer, int* index)
@@ -213,12 +245,12 @@ SPRITE* MAP::FirstSprite(int nlayer,int* index)
 
 int MAP::ValidateVid(int nvid)
 {
-    return nvid >= 0 && nvid < m_noVid && m_vids[nvid] != 0;
+    return nvid >= 0 && nvid < m_noVid && nvid < kVidCapacity && VidSlot(nvid) != 0;
 }
 
 VID* MAP::Vid(int nvid)
 {
-    return ValidateVid(nvid) ? m_vids[nvid] : EmptyVid;
+    return ValidateVid(nvid) ? VidSlot(nvid) : EmptyVid;
 }
 
 float MAP::FromScreenX(float screenX) { return screenX + m_shiftX; }
@@ -360,7 +392,7 @@ int MAP::NextVid(int oldVid,unsigned int spriteType)
             return -1;
         if (!ValidateVid(current))
             continue;
-        VID* vid = m_vids[current];
+        VID* vid = VidSlot(current);
         if (vid->PropSkipMapEd())
             continue;
         if (!vid->IsSpriteType(spriteType))
@@ -384,7 +416,7 @@ int MAP::PrevVid(int oldVid,unsigned int spriteType)
             return -1;
         if (!ValidateVid(current))
             continue;
-        VID* vid = m_vids[current];
+        VID* vid = VidSlot(current);
         if (vid->PropSkipMapEd())
             continue;
         if (!vid->IsSpriteType(spriteType))
@@ -455,16 +487,16 @@ void MAP::DeleteExtraVid()
     }
 
     for (int i=m_noVid-1;i>=0;--i) {
-        VID* vid=m_vids[i];
+        VID* vid=VidSlot(i);
         if (vid && vid->IsExtraType()) {
             void** vtable=*reinterpret_cast<void***>(vid);
             typedef void* (__thiscall *ScalarDelete)(void*,unsigned int);
             reinterpret_cast<ScalarDelete>(vtable[1])(vid,1);
-            m_vids[i]=0;
+            VidSlot(i)=0;
         }
     }
 
-    while (m_noVid > 0 && m_vids[m_noVid-1] == 0)
+    while (m_noVid > 0 && VidSlot(m_noVid-1) == 0)
         --m_noVid;
 }
 
@@ -798,9 +830,9 @@ MAP::~MAP()
         delete ::Registry;
 
     for (int i=m_noVid-1;i>=0;--i) {
-        if (m_vids[i]) {
-            DeleteVirtualObjectSlot1(m_vids[i]);
-            m_vids[i]=0;
+        if (VidSlot(i)) {
+            DeleteVirtualObjectSlot1(VidSlot(i));
+            VidSlot(i)=0;
         }
     }
     m_noVid=0;
@@ -855,7 +887,7 @@ void MAP::Release()
     for (int i=0;i<m_noVid;++i) {
         if (!ValidateVid(i))
             continue;
-        VID* const vid=m_vids[i];
+        VID* const vid=VidSlot(i);
         if (!vid->NoSprites())
             continue;
         const char* const fileName=vid->m_resourceName.m_buf;
@@ -930,8 +962,8 @@ void MAP::Release()
     m_noTact=0;
     DeleteExtraVid();
     for (int i=0;i<m_noVid;++i) {
-        if (m_vids[i])
-            m_vids[i]->ResetSprites();
+        if (VidSlot(i))
+            VidSlot(i)->ResetSprites();
     }
     for (unsigned int i=0;i<64u;++i)
         EvFunctionNumber[i]=static_cast<int>(i)+1000000;
@@ -1057,7 +1089,7 @@ void MAP::Load(STRING name)
 
         if (Hash)
             delete Hash;
-        Hash=new HASH_MAP(m_w,m_h,m_vids,m_noVid);
+        Hash=new HASH_MAP(m_w,m_h,this,m_noVid);
         SetScrollBox(0.0f,0.0f,m_w,m_h);
         ResetGroundZ();
 
@@ -1136,7 +1168,7 @@ void MAP::Load(STRING name)
             Graph->DrawDebugText("Create new hash table");
         if (Hash)
             delete Hash;
-        Hash=new HASH_MAP(m_w,m_h,m_vids,m_noVid);
+        Hash=new HASH_MAP(m_w,m_h,this,m_noVid);
         SetScrollBox(0.0f,0.0f,m_w,m_h);
         SetShiftCoor(Graph->SizeX()/2.0f+m_shiftX,Graph->SizeY()/2.0f+m_shiftY,0);
 
@@ -1178,7 +1210,7 @@ void MAP::Load(STRING name)
                 else
                     Graph->DrawDebugText("Load sprites");
             }
-            if (Graph->DrawLoadBar(m_vids[0]))
+            if (Graph->DrawLoadBar(VidSlot(0)))
                 Sound->MusicTact();
         }
         RailMap.CreateAdditionalDots();
@@ -1192,7 +1224,7 @@ void MAP::Load(STRING name)
         for (SPRITE* sprite=ReadPointer(&res);
              sprite!=reinterpret_cast<SPRITE*>(-1);
              sprite=ReadPointer(&res)) {
-            if (Graph->DrawLoadBar(m_vids[0]))
+            if (Graph->DrawLoadBar(VidSlot(0)))
                 Sound->MusicTact();
             if (sprite)
                 sprite->Action(0x51,reinterpret_cast<int>(&res),version,0);
@@ -1269,7 +1301,7 @@ void MAP::Load(STRING name)
                     Error(4,message.CharPtr(),static_cast<unsigned long>(var->no_var));
                 }
                 else if (ValidateVid(nvid))
-                    reinterpret_cast<int*>(reinterpret_cast<uint8_t*>(m_vids[nvid])+0x408)[18]=function;
+                    reinterpret_cast<int*>(reinterpret_cast<uint8_t*>(VidSlot(nvid))+0x408)[18]=function;
             } else if (strncmp(functionName.CharPtr()+5,"DESTROY",7u)==0) {
                 if (var->no_var!=1)
                     {
@@ -1278,7 +1310,7 @@ void MAP::Load(STRING name)
                     Error(4,message.CharPtr(),static_cast<unsigned long>(var->no_var));
                 }
                 else if (ValidateVid(nvid))
-                    reinterpret_cast<int*>(reinterpret_cast<uint8_t*>(m_vids[nvid])+0x408)[17]=function;
+                    reinterpret_cast<int*>(reinterpret_cast<uint8_t*>(VidSlot(nvid))+0x408)[17]=function;
             } else if (strncmp(functionName.CharPtr()+5,"COLLISION",9u)==0) {
                 if (var->no_var!=2)
                     {
@@ -1287,7 +1319,7 @@ void MAP::Load(STRING name)
                     Error(4,message.CharPtr(),static_cast<unsigned long>(var->no_var));
                 }
                 else if (ValidateVid(nvid))
-                    reinterpret_cast<int*>(reinterpret_cast<uint8_t*>(m_vids[nvid])+0x408)[19]=function;
+                    reinterpret_cast<int*>(reinterpret_cast<uint8_t*>(VidSlot(nvid))+0x408)[19]=function;
             } else {
                 const int animation=functionName[6] ?
                     10*(functionName[5]-'0')+(functionName[6]-'0') : (functionName[5]-'0');
@@ -1298,7 +1330,7 @@ void MAP::Load(STRING name)
                     Error(4,message.CharPtr(),static_cast<unsigned long>(var->no_var));
                 }
                 else if (ValidateVid(nvid) && animation<17)
-                    reinterpret_cast<int*>(reinterpret_cast<uint8_t*>(m_vids[nvid])+0x408)[animation]=function;
+                    reinterpret_cast<int*>(reinterpret_cast<uint8_t*>(VidSlot(nvid))+0x408)[animation]=function;
             }
         } else if (isdigit(functionName[4]) && functionName[5]=='_') {
             const int nvid=ParseFourDigitVid(functionName);
@@ -1311,7 +1343,7 @@ void MAP::Load(STRING name)
                     Error(4,message.CharPtr(),static_cast<unsigned long>(var->no_var));
                 }
             else if (ValidateVid(nvid) && animation<17)
-                reinterpret_cast<int*>(reinterpret_cast<uint8_t*>(m_vids[nvid])+0x408)[animation]=function;
+                reinterpret_cast<int*>(reinterpret_cast<uint8_t*>(VidSlot(nvid))+0x408)[animation]=function;
         }
     }
 
@@ -1385,7 +1417,7 @@ void MAP::Save(STRING name)
 
     int extraVid=0;
     for (;extraVid<m_noVid;++extraVid) {
-        if (m_vids[extraVid] && m_vids[extraVid]->IsExtraType())
+        if (VidSlot(extraVid) && VidSlot(extraVid)->IsExtraType())
             break;
     }
 
@@ -1510,7 +1542,7 @@ int __cdecl SortCallBack1(const int* lhs,const int* rhs)
 
 int MAP::VidToListBox(DIALOG_LIST_BOX* list,unsigned long unitTypeMask,int selectVid,int sort)
 {
-    int order[2048];
+    int order[MAP::kVidCapacity];
     for (int i=0;i<m_noVid;++i)
         order[i]=i;
     if (sort)
@@ -1519,7 +1551,7 @@ int MAP::VidToListBox(DIALOG_LIST_BOX* list,unsigned long unitTypeMask,int selec
     list->Reset();
     for (int i=0;i<m_noVid;++i) {
         const int nvid=order[i];
-        VID* vid=m_vids[nvid];
+        VID* vid=VidSlot(nvid);
         if (!vid)
             continue;
         if (vid->PropSkipMapEd())
@@ -1538,7 +1570,7 @@ int MAP::VidToControlBox(DIALOG_COMBO_BOX* list,unsigned long unitTypeMask,int s
 {
     list->Reset();
     for (int i=0;i<m_noVid;++i) {
-        VID* vid=m_vids[i];
+        VID* vid=VidSlot(i);
         if (vid && !vid->PropSkipMapEd() && vid->IsSpriteType(static_cast<int>(unitTypeMask))) {
             STRING label=vid->GetNumberName();
             const int listIndex=list->AddStringWithData(&label,i);
@@ -1565,7 +1597,7 @@ void MAP::ExchangeVid(VID* vid1,VID* vid2)
     MYERROR::Log(::Error,"Start ExchangeVid %i %i",vid1->m_idx,vid2->m_idx);
 
     for (int i=0;i<m_noVid;++i) {
-        VID* const vid=m_vids[i];
+        VID* const vid=VidSlot(i);
         if (!vid)
             continue;
         if (vid->m_linkVid==vid1)
@@ -1580,8 +1612,8 @@ void MAP::ExchangeVid(VID* vid1,VID* vid2)
         }
     }
 
-    m_vids[vid1->m_idx]=vid2;
-    m_vids[vid2->m_idx]=vid1;
+    VidSlot(vid1->m_idx)=vid2;
+    VidSlot(vid2->m_idx)=vid1;
 
     VID* tempVid=vid1->m_exchangeVid;
     vid1->m_exchangeVid=vid2->m_exchangeVid;
@@ -1664,19 +1696,19 @@ void MAP::CreateEmptyHardwareGround()
     if (m_noVid<0x401)
         m_noVid=0x401;
 
-    if (m_vids[1024]) {
-        delete m_vids[1024];
-        m_vids[1024]=0;
+    if (VidSlot(1024)) {
+        delete VidSlot(1024);
+        VidSlot(1024)=0;
     }
 
-    m_vids[1024]=new VID_HARDWARE(1024,static_cast<int>(SizeX()),static_cast<int>(SizeY()));
-    if (!m_vids[1024])
+    VidSlot(1024)=new VID_HARDWARE(1024,static_cast<int>(SizeX()),static_cast<int>(SizeY()));
+    if (!VidSlot(1024))
         return;
 
     // Retail copies MAP+0x2C0 to VID+0x45C immediately after construction.
-    m_vids[1024]->m_weapon=reinterpret_cast<WEAPON*>(m_weapon);
+    VidSlot(1024)->m_weapon=reinterpret_cast<WEAPON*>(m_weapon);
 
-    CreateSprite(m_vids[1024],SizeX()/2.0f,SizeY()/2.0f,0.0f,ANGLE(static_cast<uint8_t>(0)),0);
+    CreateSprite(VidSlot(1024),SizeX()/2.0f,SizeY()/2.0f,0.0f,ANGLE(static_cast<uint8_t>(0)),0);
     MYERROR::Log(::Error,"Create Empty Hardware Ground");
 }
 
@@ -1737,7 +1769,7 @@ SPRITE* MAP::OldLoadSprite(RESOURCE* res)
 
     SPRITE* sprite=0;
     if (ValidateVid(nvid)) {
-        sprite=CreateSprite(m_vids[nvid],static_cast<float>(x),static_cast<float>(y),
+        sprite=CreateSprite(VidSlot(nvid),static_cast<float>(x),static_cast<float>(y),
                             static_cast<float>(z),ANGLE(direction),0);
     } else {
         Error(3,const_cast<char*>("sprite, this vid not exist"),static_cast<unsigned long>(nvid));
@@ -1750,7 +1782,7 @@ SPRITE* MAP::OldLoadSprite(RESOURCE* res)
 void MAP::RestoreDeviceObjects()
 {
     for (int i=0;i<m_noVid;++i) {
-        VID* vid=m_vids[i];
+        VID* vid=VidSlot(i);
         if (vid && vid->IsFontType())
             static_cast<VID_FONT*>(vid)->RestoreDeviceObjects();
     }
@@ -1759,7 +1791,7 @@ void MAP::RestoreDeviceObjects()
 void MAP::InvalidateDeviceObjects()
 {
     for (int i=0;i<m_noVid;++i) {
-        VID* vid=m_vids[i];
+        VID* vid=VidSlot(i);
         if (vid && vid->IsFontType())
             static_cast<VID_FONT*>(vid)->InvalidateDeviceObjects();
     }
@@ -1809,7 +1841,7 @@ VID* MAP::CreateVid(RESOURCE* res,int nvid)
     for (;i<m_noVid;++i) {
         if (!ValidateVid(i))
             continue;
-        VID* const other=m_vids[i];
+        VID* const other=VidSlot(i);
         STRING* const otherFilename=reinterpret_cast<STRING*>(
             reinterpret_cast<unsigned char*>(other)+0x2EC);
         if (!otherFilename->operator==(&filename))
@@ -1951,25 +1983,27 @@ void MAP::LoadVid(RESOURCE* res)
         res->Read(&idx,4u);
         // reject negative values here and does not continue after reporting the
         // error; preserve that behavior exactly for runtime compatibility.
-        if (idx>=2048)
+        if (idx>=MAP::kVidCapacity) {
             Error(4,const_cast<char*>("nvid > MAX_VID"),static_cast<unsigned long>(idx));
+            continue;
+        }
 
-        if (m_vids[idx]) {
-            VID* old=m_vids[idx];
+        if (VidSlot(idx)) {
+            VID* old=VidSlot(idx);
             delete old;
-            m_vids[idx]=0;
+            VidSlot(idx)=0;
             Error(5,const_cast<char*>("this VID already loaded"),static_cast<unsigned long>(idx));
         }
 
-        m_vids[idx]=CreateVid(res,idx);
-        if (!m_vids[idx])
+        VidSlot(idx)=CreateVid(res,idx);
+        if (!VidSlot(idx))
             continue;
         if (idx>=m_noVid)
             m_noVid=idx+1;
         if (hadVids)
-            m_vids[idx]->SetExtraType();
+            VidSlot(idx)->SetExtraType();
 
-        VID* vid=m_vids[idx];
+        VID* vid=VidSlot(idx);
         if (vid->m_weaponIndex<m_noWeapon) {
             vid->m_weapon=reinterpret_cast<WEAPON*>(
                 reinterpret_cast<unsigned char*>(m_weapon)+vid->m_weaponIndex*0x264);
@@ -1977,12 +2011,12 @@ void MAP::LoadVid(RESOURCE* res)
             vid->Error(10,const_cast<char*>("nWeapon > noWeapon"),static_cast<unsigned long>(vid->m_weaponIndex));
             vid->m_weapon=reinterpret_cast<WEAPON*>(m_weapon);
         }
-        Graph->DrawLoadBar(m_vids[0]);
+        Graph->DrawLoadBar(VidSlot(0));
     } while (res->GoNextSub(0x204A424Fu)==0);
 
     int maxX=0,maxY=0;
     for (idx=0;idx<m_noVid;++idx) {
-        VID* vid=m_vids[idx];
+        VID* vid=VidSlot(idx);
         if (!vid)
             continue;
         vid->SetChildAndLink();

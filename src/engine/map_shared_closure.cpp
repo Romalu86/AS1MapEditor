@@ -319,7 +319,7 @@ SPRITE* MAP::LoadSprite(STREAM* stream,int version)
     stream->Read(&army,4u);
 
     if (ValidateVid(nvid))
-        sprite=CreateSprite(m_vids[nvid],x,y,z,direction,0);
+        sprite=CreateSprite(VidSlot(nvid),x,y,z,direction,0);
     else
         Error(3,const_cast<char*>("sprite, this vid not exist"),static_cast<unsigned long>(nvid));
 
@@ -653,7 +653,7 @@ VID* MAP::ReadVid(STREAM* res)
 {
     int nvid;
     res->Read(&nvid,4);
-    return ValidateVid(nvid) ? m_vids[nvid] : 0;
+    return ValidateVid(nvid) ? VidSlot(nvid) : 0;
 }
 
 void MAP::WriteVid(STREAM* res,const VID* vid)

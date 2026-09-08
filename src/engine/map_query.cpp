@@ -13,6 +13,21 @@ enum SpriteTypeMask {
     U_SPRITE  = 0x400
 };
 
+bool IsExtendedVidQuery(int type)
+{
+    return (type&0x4000)!=0;
+}
+
+bool IsVidQuery(int type)
+{
+    return IsExtendedVidQuery(type) || (type&0x800)!=0;
+}
+
+int VidQueryIndex(int type)
+{
+    return IsExtendedVidQuery(type) ? (type&0x1FFF) : (type&0x7FF);
+}
+
 bool PreferScreenHit(SPRITE* candidate,SPRITE* current)
 {
     return !current ||
@@ -30,9 +45,9 @@ int IsSpriteCorrectForGetSprite(SPRITE* sprite,int type)
 {
     if ((type & (int)0x80000000u) && !sprite->IsCommand(0))
         return 0;
-    if ((type & 0x1000) && !sprite->IsSpriteClass((unsigned int)(type & 0x7FF)))
+    if (!IsExtendedVidQuery(type) && (type & 0x1000) && !sprite->IsSpriteClass((unsigned int)(type & 0x7FF)))
         return 0;
-    if ((type & 0x800) && sprite->Vid()->m_idx != (type & 0x7FF))
+    if (IsVidQuery(type) && sprite->Vid()->m_idx != VidQueryIndex(type))
         return 0;
     return 1;
 }
@@ -45,8 +60,8 @@ SPRITE* MAP::GetSpriteScr(int type,float screenX,float screenY)
         spriteArmy = 0xF0000;
 
     int spriteType;
-    const bool vidQuery = (type & 0x800) != 0;
-    const int vidIndex = type & 0x7FF;
+    const bool vidQuery = IsVidQuery(type);
+    const int vidIndex = VidQueryIndex(type);
     if (vidQuery) {
         VID* queryVid = Vid(vidIndex);
         if (!queryVid->NoSprites())
@@ -142,8 +157,8 @@ SPRITE* MAP::FindNearestSprite(int type,float x,float y,float radius,SPRITE* pre
     if (!spriteArmy)
         spriteArmy=0xF0000;
 
-    const bool vidQuery=(type & 0x800) != 0;
-    const int vidIndex=type & 0x7FF;
+    const bool vidQuery=IsVidQuery(type);
+    const int vidIndex=VidQueryIndex(type);
     int spriteType;
     if (vidQuery) {
         VID* queryVid=Vid(vidIndex);
@@ -242,8 +257,8 @@ void MAP::FindSpritesInsidePolygon(int type,const POLYGON* polygon,SPRITE_LIST* 
         spriteArmy = 0xF0000;
 
     int spriteType;
-    const bool vidQuery = (type & 0x800) != 0;
-    const int vidIndex = type & 0x7FF;
+    const bool vidQuery = IsVidQuery(type);
+    const int vidIndex = VidQueryIndex(type);
     if (vidQuery) {
         VID* queryVid = Vid(vidIndex);
         if (queryVid->PropHash())

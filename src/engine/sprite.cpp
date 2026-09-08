@@ -580,7 +580,7 @@ int SPRITE::Action(int action,int var1,int var2,int var3)
         return 0;
     case 134:
         if (Map->ValidateVid(var1)) {
-            SPRITE* victim=Map->GetSpriteScr(var1+0x800,static_cast<float>(var2),static_cast<float>(var3));
+            SPRITE* victim=Map->GetSpriteScr(MAP::EncodeVidQuery(var1),static_cast<float>(var2),static_cast<float>(var3));
             if (victim)
                 victim->ScalarDeletingDestructor(1u);
         }

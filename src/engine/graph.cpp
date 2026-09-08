@@ -899,7 +899,7 @@ void GRAPH::SetGamma(const GAMMA* gamma)
     if (fields.gamma.operator==(gamma))
         return;
     fields.gamma=gamma;
-    for (int i=0;i<0x800;++i) {
+    for (int i=0;i<MAP::kVidCapacity;++i) {
         VID* vid=Map->Vid(i);
         if (vid!=EmptyVid)
             Map->Vid(i)->SetGamma(gamma,4);

@@ -2,7 +2,7 @@
 // HASH_MAP owner. Included in ABI order by mapedit/runtime.hpp.
 class HASH_MAP {
 public:
-    HASH_MAP(float size_x,float size_y,VID** vids,int no_vid);
+    HASH_MAP(float size_x,float size_y,MAP* owner,int no_vid);
     ~HASH_MAP();
     int begx,begy,endx,endy,curx,curindex,curUnit,shiftY,noX,noY;
     float scaleCellX,scaleCellY;

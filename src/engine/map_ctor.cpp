@@ -80,7 +80,7 @@ MAP::MAP(HINSTANCE__* instance,HINSTANCE__* prev,const STRING* command_line,int 
     m_fps=0;
     m_fpsCnt=0;
     m_shiftFlag=1;
-    memset(m_vids,0,sizeof(m_vids));
+    ClearVidSlots();
     memset(m_player,0,sizeof(m_player));
     m_instance=instance;
     ResetGroundZ();
@@ -216,7 +216,7 @@ MAP::MAP(HINSTANCE__* instance,HINSTANCE__* prev,const STRING* command_line,int 
     // Retail source line 186 is unconditional: EmptyVid is a required output
     // of the resource/VID startup chain, not an optional compatibility path.
     EmptyVid->m_weapon=(WEAPON*)m_weapon;
-    Hash=new HASH_MAP(m_w,m_h,m_vids,m_noVid);
+    Hash=new HASH_MAP(m_w,m_h,this,m_noVid);
     resource.Close();
     SetCursor(0);
 

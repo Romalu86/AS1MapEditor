@@ -58,7 +58,7 @@ void MAP_EDIT::LoadTerrain(STRING filename)
 
     int terrainIndex = 0;
     while (terrainIndex < m_noVid) {
-        if (m_vids[terrainIndex] && m_vids[terrainIndex]->IsExtraType())
+        if (VidSlot(terrainIndex) && VidSlot(terrainIndex)->IsExtraType())
             break;
         ++terrainIndex;
     }

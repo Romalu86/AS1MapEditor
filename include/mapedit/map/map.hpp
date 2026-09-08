@@ -24,6 +24,13 @@ public:
     void LoadWeapon(RESOURCE* res);
     VID* CreateVid(RESOURCE* res,int nvid);
 
+    static constexpr int kRetailVidCapacity=2048;
+    static constexpr int kVidCapacity=8192;
+    VID*& VidSlot(int nvid);
+    VID* VidSlot(int nvid) const;
+    void ClearVidSlots();
+    static int EncodeVidQuery(int nvid);
+
     int      m_fps;             // +0x004
     int      m_fpsCnt;          // +0x008
     uint32_t m_flags;           // +0x00C; init-success is bit 2
@@ -59,7 +66,7 @@ public:
     int          m_noWeapon;    // +0x2BC
     void*        m_weapon;      // +0x2C0
     int          m_noVid;       // +0x2C4
-    VID*         m_vids[2048];  // +0x2C8, original MAX_VID=2048
+    VID*         m_vids[2048];  // +0x2C8, retail ABI slots 0..2047; 2048..8191 use side storage
     MOUSETIPS    m_mousetips;   // +0x22C8
 
     int IsInitSuccess();

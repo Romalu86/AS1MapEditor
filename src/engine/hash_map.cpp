@@ -252,7 +252,7 @@ int HASH_MAP::Delete(SPRITE* sprite)
     return result;
 }
 
-HASH_MAP::HASH_MAP(float size_x,float size_y,VID** vids,int no_vid)
+HASH_MAP::HASH_MAP(float size_x,float size_y,MAP* owner,int no_vid)
 {
     // Retail 0x00450BF0 initializes only these iterator fields before the
     // sizing pass; the remaining box iterator fields are left untouched until
@@ -263,7 +263,7 @@ HASH_MAP::HASH_MAP(float size_x,float size_y,VID** vids,int no_vid)
     float max_x=0.0f;
     float max_y=0.0f;
     for (int i=0;i<no_vid;++i) {
-        VID* vid=vids[i];
+        VID* vid=owner->VidSlot(i);
         // reference behavior @ 0x00450C54 calls VID::PropHash @ 0x0041F5F0.
         // The pre-A11 implementation incorrectly used PropGround here.
         if (!vid || !vid->PropHash())

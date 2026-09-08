@@ -896,7 +896,7 @@ int MAP_EDIT::DialogUnitProperty(HWND__* hwnd,unsigned int msg,unsigned int wPar
         items.Reset();
         vids.Reset();
         for (int i=0;i<m_noVid;++i) {
-            VID* vid=m_vids[i];
+            VID* vid=VidSlot(i);
             if (!vid)
                 continue;
             if (first->IsSpriteClass(vid->m_spriteClass)) {
@@ -968,7 +968,7 @@ int MAP_EDIT::DialogUnitProperty(HWND__* hwnd,unsigned int msg,unsigned int wPar
         items.Reset();
         SPRITE* first=*selectedSprites.First();
         for (int i=0;i<m_noVid;++i) {
-            VID* vid=m_vids[i];
+            VID* vid=VidSlot(i);
             if (!vid || !vid->IsSpriteType(mask))
                 continue;
             STRING label=vid->GetNumberName();

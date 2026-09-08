@@ -43,10 +43,10 @@ MAP_EDIT::MAP_EDIT(HINSTANCE__* instance,HINSTANCE__* prev,const STRING* command
     SetControlPanel(Registry->GetInt(STRING("ControlPanel"),0));
     const int no_hide=Registry->GetInt(STRING("NoHideVids"),0);
     if (no_hide) {
-        unsigned int hide[2048];
+        unsigned int hide[MAP::kVidCapacity];
         Registry->GetData(STRING("HideVids"),hide,(unsigned long)(no_hide*4));
         for (int i=0;i<no_hide;i++)
-            if (m_vids[hide[i]]) m_vids[hide[i]]->SetPropHide(1);
+            if (VidSlot(hide[i])) VidSlot(hide[i])->SetPropHide(1);
     }
     Load(STRING(m_startupLoad));
 }
@@ -60,9 +60,9 @@ MAP_EDIT::~MAP_EDIT()
     Registry->SetInt(STRING("ControlPanel"),(int)optControlPanel);
 
     unsigned int no_hide=0;
-    unsigned int hide[2048];
+    unsigned int hide[MAP::kVidCapacity];
     for (int i=0;i<m_noVid;i++) {
-        if (m_vids[i] && m_vids[i]->PropHide()) hide[no_hide++]=(unsigned int)i;
+        if (VidSlot(i) && VidSlot(i)->PropHide()) hide[no_hide++]=(unsigned int)i;
     }
     Registry->SetInt(STRING("NoHideVids"),(int)no_hide);
     Registry->SetData(STRING("HideVids"),hide,no_hide*4u);

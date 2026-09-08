@@ -187,7 +187,7 @@ void MAP::ReloadVid()
 {
     RESOURCE res;
     for (int i=0;i<m_noVid;++i) {
-        VID* v=m_vids[i];
+        VID* v=VidSlot(i);
         if (v && v->m_exchangeVid && v->m_exchangeVid!=v)
             ExchangeVid(v->m_exchangeVid,v);
     }
@@ -206,17 +206,17 @@ void MAP::ReloadVid()
     do {
         int idx=0;
         res.Read(&idx,4);
-        if (idx>=2048) {
+        if (idx>=MAP::kVidCapacity) {
             char text[]="nvid > MAX_VID";
             Error(4,text,(unsigned long)idx);
             continue;
         }
-        if (idx>=0 && idx<m_noVid && m_vids[idx]) {
-            VID* current=m_vids[idx];
+        if (idx>=0 && idx<m_noVid && VidSlot(idx)) {
+            VID* current=VidSlot(idx);
             if (current->m_exchangeVid)
                 idx=current->m_exchangeVid->m_idx;
-            if (idx>=0 && idx<m_noVid && m_vids[idx]) {
-                VID* v=m_vids[idx];
+            if (idx>=0 && idx<m_noVid && VidSlot(idx)) {
+                VID* v=VidSlot(idx);
                 v->m_name.Read(&res);
                 v->LoadParameters(&res);
                 if (v->m_weaponIndex>=0 && v->m_weaponIndex<m_noWeapon)
@@ -227,7 +227,7 @@ void MAP::ReloadVid()
         }
     } while (!res.GoNextSub(0x204A424Fu));
     for (int i=0;i<m_noVid;++i) {
-        VID* v=m_vids[i];
+        VID* v=VidSlot(i);
         if (v && !v->IsExtraType())
             v->SetChildAndLink();
     }

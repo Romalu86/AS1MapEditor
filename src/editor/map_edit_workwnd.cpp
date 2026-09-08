@@ -90,7 +90,7 @@ int MAP_EDIT::WorkWndMessage(HWND__* hwnd,unsigned long msg,unsigned long wParam
             if (optTacticMode && selectedSprites.No()>0) {
                 POLYGON polygon;
                 polygon.CreateBox(0.0f,0.0f,m_w,m_h);
-                const int type=(*selectedSprites[0])->Vid()->m_idx+0x800;
+                const int type=MAP::EncodeVidQuery((*selectedSprites[0])->Vid()->m_idx);
                 FindSpritesInsidePolygon(type,&polygon,&selectedSprites);
             }
             break;
@@ -100,7 +100,7 @@ int MAP_EDIT::WorkWndMessage(HWND__* hwnd,unsigned long msg,unsigned long wParam
                 POLYGON polygon;
                 polygon.CreateBox(Graph->ViewXMin()+m_shiftX,Graph->ViewYMin()+m_shiftY,
                                   Graph->ViewXMax()+m_shiftX,Graph->ViewYMax()+m_shiftY);
-                const int type=(*selectedSprites[0])->Vid()->m_idx+0x800;
+                const int type=MAP::EncodeVidQuery((*selectedSprites[0])->Vid()->m_idx);
                 FindSpritesInsidePolygon(type,&polygon,&selectedSprites);
             }
             break;
@@ -501,7 +501,7 @@ int MAP_EDIT::WorkWndMessage(HWND__* hwnd,unsigned long msg,unsigned long wParam
 
             int i=0;
             for (;i<m_noVid;++i) {
-                VID* vid=m_vids[i];
+                VID* vid=VidSlot(i);
                 if (vid && vid->IsExtraType() && i==0x400) {
                     STRING* terrainName=&vid->m_resourceName;
                     FRemove(terrainName);

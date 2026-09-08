@@ -185,7 +185,7 @@ void MAP_EDIT::DeleteUnit(float x,float y,int sprite_type)
 {
     SPRITE* sprite;
     if (optAirBrush) {
-        sprite=FindNearestSprite(Mouse->Vid()->m_idx + 0x800,
+        sprite=FindNearestSprite(MAP::EncodeVidQuery(Mouse->Vid()->m_idx),
                                  x,y,static_cast<float>(optAirBrushSize),0);
     } else {
         sprite=FindNearestSprite(sprite_type << 20,x,y,100.0f,0);
