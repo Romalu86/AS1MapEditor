@@ -3,6 +3,8 @@
 Alien Shooter Map Editor is a Win32 map editor project prepared for modern Visual Studio while
 preserving the established editor behavior and legacy file compatibility.
 
+Supports all AS1 Engine games released before 2007. Does not work with ZS1 or later versions.
+
 ## Build target
 
 - Visual Studio 2022
